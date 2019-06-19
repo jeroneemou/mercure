@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Mercure!</title>
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+    <script>
+        const url = new URL('http://localhost/hub');
+        url.searchParams.append('topic', 'whatever');
+
+        const eventSource = new EventSource(url);
+
+        // The callback will be called every time an update is published
+        eventSource.onmessage = e => console.log(e); // do something with the payload
+    </script>
+  </body>
+</html>
