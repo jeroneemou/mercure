@@ -10,25 +10,41 @@ app.use(express.json())
 app.post('/', (req, res) => {
 
     const postData = querystring.stringify({
-        'topic': 'whatever',
+        'topic': 'foo', // Could be anything
         'data': JSON.stringify(req.body),
     });
     
-    const hubRequest = http.request({
-        hostname: 'localhost',
-        port: 80,
-        path: '/hub',
-        method: 'POST',
-        headers: {
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InN1YnNjcmliZSI6W10sInB1Ymxpc2giOltdfX0.rHbUIeTk5cobMgOFbuc_8WDNN9wVTyYnf7O5u9H9LgE',
-            // the JWT must have a mercure.publish key containing an array of targets (can be empty for public updates)
-            // the JWT key must be shared between the hub and the server
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': Buffer.byteLength(postData),
-        }
-    }, /* optional response handler */);
-    hubRequest.write(postData);
-    hubRequest.end();
+    try {
+        const hubRequest = http.request({
+            hostname: 'localhost',
+            port: 80,
+            path: '/hub',
+            method: 'POST',
+            headers: {
+                // this-is-my-pipi
+                /**
+                 * {
+                    "mercure": {
+                        "subscribe": [
+                        ],
+                        "publish": [
+                        ]
+                    }
+                    }
+                 */
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InN1YnNjcmliZSI6W10sInB1Ymxpc2giOltdfX0.rHbUIeTk5cobMgOFbuc_8WDNN9wVTyYnf7O5u9H9LgE',
+                // the JWT must have a mercure.publish key containing an array of targets (can be empty for public updates)
+                // the JWT key must be shared between the hub and the server
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': Buffer.byteLength(postData),
+            }
+        }, /* optional response handler */);
+        hubRequest.write(postData);
+        hubRequest.end();
+    } catch (e) {
+        console.log(e);
+    }
+    
 
     res.send('ok')
 })

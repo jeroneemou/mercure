@@ -7,14 +7,21 @@
   </head>
   <body>
     <h1>Hello, world!</h1>
+    <div id="content"></div>
     <script>
-        const url = new URL('http://localhost/hub');
-        url.searchParams.append('topic', 'whatever');
+        const url = new URL('http://localhost/hub')
+        url.searchParams.append('topic', 'foo')
 
         const eventSource = new EventSource(url);
 
         // The callback will be called every time an update is published
-        eventSource.onmessage = e => console.log(e); // do something with the payload
+        eventSource.onmessage = e => {
+          const content = document.createElement('div')
+          content.innerHTML = JSON.stringify(e.data)
+          // content.setAttribute('type', 'textarea')
+          document.getElementById('content').appendChild(content)
+          console.log(e)
+        }; // do something with the payload
     </script>
   </body>
 </html>
